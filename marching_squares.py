@@ -1,10 +1,5 @@
 import pygame
-from vector import Vector2D
-from random import randint
-
-
-
-
+from vector import Vector2D, randint
 
 def Default_Cellular_Automata_Rule(current, num_neighbours):
     birth_requirement = 4
@@ -19,26 +14,6 @@ def Default_Cellular_Automata_Rule(current, num_neighbours):
             return True
         else:
             return False
-
-def ConwaysGameOfLifeRule(current, num_neighbours):
-    """
-    If a living cell has less than two living neighbours, it dies.
-    If a living cell has two or three living neighbours, it stays alive.
-    If a living cell has more than three living neighbours, it dies.
-    If a dead cell has exactly three living neighbours, it becomes alive.
-    """
-    if current and num_neighbours < 2:
-        return False
-    elif current and num_neighbours in [2, 3]:
-        return True
-    elif current and num_neighbours > 3:
-        return False
-    elif not current and num_neighbours == 3:
-        return True
-    else:
-        return current
-
-
 
 def Generate_Cellular_Automata_Grid(marchin_squares_object, iterations=10, fill=60, rule=Default_Cellular_Automata_Rule):
     grid = []
@@ -92,96 +67,38 @@ def Generate_Surface_from_Grid(grid):
     
     return surface
 
-
-
-def Draw_Basic_algorithm(screen, rect, resolution, wall_colour):
+def Draw_Basic_algorithm(screen, rect, resolution, wall_colour, line_width):
     rect.sort(key=lambda elem: Vector2D(0, -1000).dist(elem, use_sqrt=False))
     rect[2], rect[3] = rect[3], rect[2]
     nibble = ''.join([str(int(i.data["state"])) for i in rect])
 
     x, y = rect[0].get_xy(int)
-    r = resolution
+    hr, r = resolution/2, resolution
 
-    polygon1 = []
-    polygon2 = []
     #region cases
-    if nibble in ['0000']: # Case 0
-        pass
+    if nibble == '0000' : pass
 
-    if nibble in ['0001', '1110']: # Case 1 and 14
-        polygon1.append((x, y + r/2))
-        polygon1.append((x + r/2, y + r))
-        polygon1.append((x, y+r))
+    if nibble == '0001' or nibble == '1110' : pygame.draw.line(screen, wall_colour, (x, y + hr), (x + hr, y + r), line_width)
 
-    if nibble in ['0010', '1101']: # Case 2 and 13
-        polygon1.append((x + r, y + r/2))
-        polygon1.append((x + r/2, y + r))
-        polygon1.append((x + r, y + r))
+    if nibble == '0010' or nibble == '1101' : pygame.draw.line(screen, wall_colour, (x + r, y + hr), (x + hr, y + r), line_width)
 
-    if nibble in ['0011']: # Case 3
-        polygon1.append((x, y + r/2))
-        polygon1.append((x + r, y + r/2))
-        polygon1.append((x + r, y + r))
-        polygon1.append((x, y + r))
+    if nibble == '1011' or nibble == '0100' : pygame.draw.line(screen, wall_colour, (x + hr, y), (x + r, y + hr), line_width)
 
-    if nibble in ['0100', '1011']: # Case 4 and 11
-        polygon1.append((x + r/2, y))
-        polygon1.append((x + r, y + r/2))
-        polygon1.append((x + r, y))
+    if nibble == '0111' or nibble == '1000' : pygame.draw.line(screen, wall_colour, (x + hr, y), (x, y + hr), line_width)
 
-    if nibble in ['0101']: # Case 5
-        polygon1.append((x + r, y + r/2))
-        polygon1.append((x + r/2, y + r))
-        polygon1.append((x + r, y + r))
 
-        polygon2.append((x + r/2, y))
-        polygon2.append((x, y + r/2))
-        polygon2.append((x, y))
+    if nibble == '1100' or nibble == '0011' : pygame.draw.line(screen, wall_colour, (x, y + hr), (x + r, y + hr), line_width)
 
-    if nibble in ['0110']: # Case 6
-        polygon1.append((x + r/2, y))
-        polygon1.append((x + r/2, y + r))
-        polygon1.append((x + r, y + r))
-        polygon1.append((x + r, y))
+    if nibble == '1001' or nibble == '0110' : pygame.draw.line(screen, wall_colour, (x + hr, y), (x + hr, y + r), line_width)
+    
+    if nibble == '1010':
+        pygame.draw.line(screen, wall_colour, (x + hr, y), (x, y + hr), line_width)
+        pygame.draw.line(screen, wall_colour, (x + r, y + hr), (x + hr, y + r), line_width)
 
-    if nibble in ['0111', '1000']: # Case 7 and 8
-        polygon1.append((x + r/2, y))
-        polygon1.append((x, y + r/2))
-        polygon1.append((x, y))
-
-    if nibble in ['1001']: # Case 9
-        polygon1.append((x + r/2, y))
-        polygon1.append((x + r/2, y + r))
-        polygon1.append((x, y + r))
-        polygon1.append((x, y))
-
-    if nibble in ['1010']: # Case 10
-        polygon1.append((x, y + r/2))
-        polygon1.append((x + r/2, y + r))
-        polygon1.append((x, y+r))
-
-        polygon2.append((x + r/2, y))
-        polygon2.append((x + r, y + r/2))
-        polygon2.append((x + r, y))
-
-    if nibble in ['1100']: # Case 12
-        polygon1.append((x, y))
-        polygon1.append((x + r, y))
-        polygon1.append((x + r, y + r/2))
-        polygon1.append((x, y + r/2))
-
-    if nibble in ['1111']: # Case 15
-        polygon1.append((x, y))
-        polygon1.append((x + r, y))
-        polygon1.append((x + r, y + r))
-        polygon1.append((x, y + r))
-
+    if nibble == '0101':
+        pygame.draw.line(screen, wall_colour, (x + hr, y), (x + r, y + hr), line_width)
+        pygame.draw.line(screen, wall_colour, (x, y + hr), (x + hr, y + r), line_width)
     #endregion
-
-    if len(polygon1) > 2:
-        pygame.draw.polygon(screen, wall_colour, polygon1)
-    if len(polygon2) > 2:
-        pygame.draw.polygon(screen, wall_colour, polygon2)
 
 class Marching_Squares():
     def __init__(self, size, resolution=25, celular_automata_iterations=10):
@@ -194,11 +111,11 @@ class Marching_Squares():
         self.w = int(self.size[1] / self.resolution)
         self.h = int(self.size[0] / self.resolution)
 
-    def draw(self, screen, display_points=False, wall_colour=[120, 60, 0]):
+    def draw(self, screen, display_points=False, wall_colour=[120, 60, 0], line_width=3):
         if self.grid != [] and self.points != []:
 
             for rect in self.grid:
-                Draw_Basic_algorithm(screen, rect, self.resolution, wall_colour)
+                Draw_Basic_algorithm(screen, rect, self.resolution, wall_colour, line_width)
 
             if not display_points : return
 
