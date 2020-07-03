@@ -1,6 +1,8 @@
 # Marching-Squares
 My attempt at making the marching squares algorithm
 
+<img src="https://raw.githubusercontent.com/hamolicious/Marching-Squares/master/Capture.PNG?token=ANSOQSWECQDRTMR7DB2VZ62675BZE">
+
 <strong>Required</strong><br>
 Python 2.7-3.8<br>
 Pygame 2.0.0.dev6<br>
@@ -9,8 +11,8 @@ To use this script use the following commands:
 ```
 pip install pygame
 
-git clone <URL>
-cd <REPO NAME>
+git clone https://github.com/hamolicious/Marching-Squares.git
+cd Marching-Squares
 python main.py
 ```
 
